@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
   try {
     const data = await Blog.find({}).populate("user");
 
-    return res.status(200).json(req.token);
+    return res.status(200).json(data);
   } catch (error) {
     logger.error(error.message);
     res.status(500).send({ message: error.message });
