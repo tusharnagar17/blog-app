@@ -2,119 +2,94 @@ import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import ErrorMessage from "./components/ErrorMsg";
+import LoginForm from "./components/LoginForm";
+import BlogForm from "./components/BlogForm";
+import Toggable from "./components/Toggable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [errorMsg, setErrorMsg] = useState([]);
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
-  const [user, setUser] = useState("tushar");
-  const [newBlog, setNewBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
-    likes: "",
-  });
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const [user, setUser] = useState("");
+  const [isLogged, setIsLogged] = useState(false);
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    console.log("userEffect", blogs);
+    const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
 
-  const LoginForm = () => {
-    const handleLogin = (e) => {
-      e.preventDefault();
-      const cred = {
-        username,
-        password,
-      };
-      // loginService.login(cred);
-      console.log(username, password);
-    };
-    return (
-      <div>
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <label htmlFor="username">Username :</label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-          <label htmlFor="password">Password :</label>
-          <input
-            type="text"
-            name="password"
-            id="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    );
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      // console.log("called at useEffect", user);
+      setUser(user.name);
+      console.log("username added as: ", user.name);
+      blogService.setToken(user.token);
+    } else {
+      console.log("no data in window.localStorage");
+    }
+  }, [setBlogs]);
+
+  const handleBlogSubmit = async (newBlog) => {
+    console.log("here is new blog");
+    console.log(newBlog);
+    console.log("noteform clicked!", newBlog);
+    const data = await blogService.create(newBlog);
+    console.log(data);
+    setBlogs([...blogs, data]);
   };
-  const NoteForm = () => {
-    const handleSubmit = (e) => {
-      e.preventDefault();
-    };
-    const BlogInput = (e) => {
-      const { name, value } = e.target;
-      setNewBlog({ ...newBlog, [name]: value });
-    };
-    return (
-      <div>
-        <h2>Add a Blog</h2>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="title">Title : </label>{" "}
-          <input
-            type="text"
-            name="title"
-            id="title"
-            value={newBlog.title}
-            onChange={BlogInput}
-          />
-          <br />
-          <label htmlFor="author">author : </label>{" "}
-          <input
-            type="text"
-            name="author"
-            id="author"
-            value={newBlog.author}
-            onChange={BlogInput}
-          />
-          <br />
-          <label htmlFor="url">url : </label>{" "}
-          <input
-            type="text"
-            name="url"
-            id="url"
-            value={newBlog.url}
-            onChange={BlogInput}
-          />
-          <br />
-          <label htmlFor="likes">likes : </label>{" "}
-          <input
-            type="text"
-            name="likes"
-            id="likes"
-            value={newBlog.likes}
-            onChange={BlogInput}
-          />
-          <br />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
+  const handleLogin = async (credentials) => {
+    // comment for sometime
+
+    console.log("handleLogin Clicked!!!", credentials);
+
+    const loginRequest = await loginService.login(credentials);
+
+    if (!loginRequest) {
+      setErrorMsg("Unable to login");
+    }
+    window.localStorage.setItem(
+      "loggedNoteappUser",
+      JSON.stringify(loginRequest)
     );
+    setUser(loginRequest.name);
+    console.log("loginRequest user", loginRequest);
+    console.log("successfully Logged In");
+    blogService.setToken(loginRequest.token);
   };
-  console.log(blogs);
+
+  const LogoutButton = () => {
+    const handleClick = () => {
+      window.localStorage.removeItem("loggedNoteappUser");
+
+      setUser("");
+      // console.log(user);
+    };
+    return <button onClick={handleClick}>Log Out</button>;
+  };
 
   return (
     <div>
-      {user === "" ? LoginForm() : NoteForm()}
-      {blogs.map((note) => (
-        <Blog blog={note} />
-      ))}
+      {!user && (
+        <div>
+          <Toggable name="login">
+            <LoginForm handleLogin={handleLogin} />
+          </Toggable>
+          <br />
+        </div>
+      )}
+
+      {user && (
+        <>
+          {user} is logged in <LogoutButton />
+          <Toggable name="add a blog">
+            <BlogForm handleBlogSubmit={handleBlogSubmit} />
+          </Toggable>
+          {blogs.map((note) => (
+            <Blog blog={note} />
+          ))}
+        </>
+      )}
     </div>
   );
 };
