@@ -11,7 +11,13 @@ router.use(middleware.tokenExtractor);
 // GET request
 router.get("/", async (req, res) => {
   try {
-    const data = await Blog.find({}).populate("user");
+    const data = await Blog.find({})
+      .populate("user", {
+        username: 1,
+        name: 1,
+        blogs: 1,
+      })
+      .sort({ likes: 1 });
 
     return res.status(200).json(data);
   } catch (error) {
