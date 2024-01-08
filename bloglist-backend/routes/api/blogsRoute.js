@@ -82,10 +82,25 @@ router.put("/:id/like", async (req, res) => {
     const result = await postToUpdate;
     return res.status(200).json({ message: "successfully updated like" });
   } catch (error) {
-    console.log({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
-router.delete("/:id", async (req, res) => {});
+router.delete("/:delid", async (req, res) => {
+  const blogId = req.params.delid;
+  try {
+    const deletedPost = await Blog.findOneAndDelete({ id: blogId })
+      .then(() => console.log("successfully deleted"))
+      .catch((e) => console.log(e.message));
+    if (!deletedPost) {
+      return res.json({ message: "can't find by id" });
+    }
+    return res
+      .status(200)
+      .json({ message: "Post Deleted Successful", deletedPost });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

@@ -68,7 +68,16 @@ const App = () => {
     };
     return <button onClick={handleClick}>Log Out</button>;
   };
-
+  const delPost = async (id) => {
+    const result = window.confirm(
+      "Are you sure want to delete this blog post ? "
+    );
+    if (result) {
+      await blogService.remove(id);
+    } else {
+      console.log("declined to delete");
+    }
+  };
   return (
     <div>
       {!user && (
@@ -87,7 +96,7 @@ const App = () => {
             <BlogForm handleBlogSubmit={handleBlogSubmit} />
           </Toggable>
           {blogs.map((note) => (
-            <Blog blog={note} likePost={LikePost} />
+            <Blog blog={note} likePost={LikePost} delPost={delPost} />
           ))}
         </>
       )}

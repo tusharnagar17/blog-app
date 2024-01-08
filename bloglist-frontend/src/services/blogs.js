@@ -25,4 +25,9 @@ const put = async (postId) => {
   return response.data;
 };
 
-export default { getAll, create, setToken, put };
+const remove = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`);
+  return response;
+};
+
+export default { getAll, create, setToken, put, remove };

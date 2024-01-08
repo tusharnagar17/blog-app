@@ -1,6 +1,6 @@
 import Toggable from "./Toggable";
 
-const Blog = ({ blog, likePost }) => {
+const Blog = ({ blog, likePost, delPost }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -22,6 +22,17 @@ const Blog = ({ blog, likePost }) => {
     };
     return <button onClick={handleClick}>::LIKE</button>;
   };
+  const DeleteButton = () => {
+    const handleClick = () => {
+      delPost(blog.id);
+    };
+    return (
+      <button style={{ backgroundColor: "tomato" }} onClick={handleClick}>
+        {" "}
+        Delete{" "}
+      </button>
+    );
+  };
 
   return (
     <div style={blogStyle}>
@@ -36,6 +47,8 @@ const Blog = ({ blog, likePost }) => {
           Likes :{blog.likes} <LikeButton />
           <br />
           Author :{blog.author}
+          <br />
+          <DeleteButton />
         </Toggable>
         {/* {blog.title}
          {blog.author} */}
