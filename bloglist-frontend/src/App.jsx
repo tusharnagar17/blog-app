@@ -16,27 +16,23 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
-    console.log("userEffect", blogs);
+  }, [blogs]);
+
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
 
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      // console.log("called at useEffect", user);
       setUser(user.name);
-      console.log("username added as: ", user.name);
       blogService.setToken(user.token);
     } else {
       console.log("no data in window.localStorage");
     }
-  }, [setBlogs]);
+  }, []);
 
   const handleBlogSubmit = async (newBlog) => {
-    console.log("here is new blog");
-    console.log(newBlog);
-    console.log("noteform clicked!", newBlog);
     const data = await blogService.create(newBlog);
-    console.log(data);
-    setBlogs([...blogs, data]);
+    setBlogs(blogs.concat(data));
   };
   const handleLogin = async (credentials) => {
     // comment for sometime
