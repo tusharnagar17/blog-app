@@ -1,6 +1,6 @@
 import Toggable from "./Toggable";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likePost }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,6 +15,13 @@ const Blog = ({ blog }) => {
   //   url: "tushar.com",
   //   likes: "12313131",
   // };
+  const LikeButton = () => {
+    const handleClick = () => {
+      console.log("handle clicked");
+      likePost(blog.id);
+    };
+    return <button onClick={handleClick}>::LIKE</button>;
+  };
 
   return (
     <div style={blogStyle}>
@@ -26,7 +33,7 @@ const Blog = ({ blog }) => {
           <br />
           Url :{blog.url}
           <br />
-          Likes :{blog.likes}
+          Likes :{blog.likes} <LikeButton />
           <br />
           Author :{blog.author}
         </Toggable>

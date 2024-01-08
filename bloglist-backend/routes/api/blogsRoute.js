@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST request
-router.post("", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { title, author, url, likes } = req.body;
     const decodedToken = await jwt.verify(req.token, config.JWT_SECRET);
@@ -63,5 +63,23 @@ router.post("", async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
+
+router.put("/:id/like", async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    const postToUpdate = await Blog.findById(postId);
+    if (!postToUpdate) {
+      res.status(400).json({ message: "unable to find id" });
+    }
+    postToUpdate.likes += 1;
+    const result = await postToUpdate;
+    return res.status(200).json({ message: "successfully updated like" });
+  } catch (error) {
+    console.log({ error: error.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {});
 
 module.exports = router;

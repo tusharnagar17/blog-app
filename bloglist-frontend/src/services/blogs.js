@@ -19,4 +19,10 @@ const create = async (newObject) => {
   const response = await axios.post(baseUrl, newObject, config);
   return response.data;
 };
-export default { getAll, create, setToken };
+
+const put = async (postId) => {
+  const response = await axios.put(`${baseUrl}/${postId}/like`);
+  return response.data;
+};
+
+export default { getAll, create, setToken, put };

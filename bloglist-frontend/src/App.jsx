@@ -29,7 +29,12 @@ const App = () => {
       console.log("no data in window.localStorage");
     }
   }, []);
+  const LikePost = async (postId) => {
+    console.log("LikePost handle", postId);
 
+    const data = await blogService.put(postId);
+    console.log(data);
+  };
   const handleBlogSubmit = async (newBlog) => {
     const data = await blogService.create(newBlog);
     setBlogs(blogs.concat(data));
@@ -82,7 +87,7 @@ const App = () => {
             <BlogForm handleBlogSubmit={handleBlogSubmit} />
           </Toggable>
           {blogs.map((note) => (
-            <Blog blog={note} />
+            <Blog blog={note} likePost={LikePost} />
           ))}
         </>
       )}
