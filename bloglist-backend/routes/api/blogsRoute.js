@@ -6,6 +6,7 @@ const middleware = require("./../../utils/middleware");
 const jwt = require("jsonwebtoken");
 const config = require("./../../utils/config");
 const User = require("./../../models/userModel");
+const mongodb = require("mongodb");
 
 router.use(middleware.tokenExtractor);
 // GET request
@@ -88,18 +89,17 @@ router.put("/:id/like", async (req, res) => {
 
 router.delete("/:delid", async (req, res) => {
   const blogId = req.params.delid;
+
   try {
-    const deletedPost = await Blog.findOneAndDelete({ id: blogId })
-      .then(() => console.log("successfully deleted"))
-      .catch((e) => console.log(e.message));
+    const deletedPost = await Blog.findOneAndDelete({
+      id: new mongodb.ObjectId(blogId),
+    });
     if (!deletedPost) {
-      return res.json({ message: "can't find by id" });
+      return res.status(400).json({ message: deletedPost });
     }
-    return res
-      .status(200)
-      .json({ message: "Post Deleted Successful", deletedPost });
+    return res.status(200).json({ message: deletedPost });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 

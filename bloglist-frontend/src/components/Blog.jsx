@@ -20,7 +20,7 @@ const Blog = ({ blog, likePost, delPost }) => {
       console.log("handle clicked");
       likePost(blog.id);
     };
-    return <button onClick={handleClick}>::LIKE</button>;
+    return <button onClick={handleClick}>like</button>;
   };
   const DeleteButton = () => {
     const handleClick = () => {
@@ -35,7 +35,7 @@ const Blog = ({ blog, likePost, delPost }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div>
         <Toggable name="view" content={blog.title}>
           <br />

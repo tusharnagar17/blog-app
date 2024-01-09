@@ -16,7 +16,7 @@ const Toggable = (props) => {
           {props.content}
           <button onClick={toggleVisibility}>{props.name}</button>
         </div>
-        <div style={showProperty}>
+        <div style={showProperty} className="toggableContent">
           {props.content} <button onClick={toggleVisibility}>hide</button>
           {props.children}
         </div>
@@ -28,7 +28,7 @@ const Toggable = (props) => {
         <div style={hideProperty}>
           <button onClick={toggleVisibility}>{props.name}</button>
         </div>
-        <div style={showProperty}>
+        <div style={showProperty} className="toggableContent">
           {props.children}
           <button onClick={toggleVisibility}>Cancel</button>
         </div>
