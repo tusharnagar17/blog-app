@@ -22,6 +22,12 @@ app.use("/api/blogs", blogs);
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
 
+if (config.NODE_ENV === "test") {
+  const testingRouter = require("./controllers/testing");
+
+  app.use("/api/testing", testingRouter);
+}
+
 mongoose
   .connect(config.MONGODB_URL)
   .then(() => {
